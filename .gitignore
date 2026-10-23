@@ -1,0 +1,12 @@
+.env
+.venv/
+.pip-cache/
+__pycache__/
+media/
+models/
+*.part
+_wheeltest/
+evals/
+net-*.txt
+tmpdoc
+*.log

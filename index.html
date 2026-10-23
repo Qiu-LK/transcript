@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>视频号文字稿提取器</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow">LOCAL TRANSCRIPT DEMO</div>
+      <h1>视频号文字稿提取器</h1>
+      <p>粘贴视频号分享链接，自动获取视频，生成带说话人标注的文字稿。</p>
+    </header>
+
+    <section class="card input-card">
+      <label for="shareUrl">视频号分享地址</label>
+      <div class="input-row">
+        <input id="shareUrl" type="text" placeholder="https://weixin.qq.com/sph/ArtzUI73wc" autocomplete="off">
+        <label class="speaker-control" for="speakerCount">
+          <span>说话人数</span>
+          <select id="speakerCount">
+            <option value="-1">自动判断</option>
+            <option value="1">1 人</option>
+            <option value="2">2 人</option>
+            <option value="3">3 人</option>
+            <option value="4">4 人</option>
+            <option value="5">5 人</option>
+            <option value="6">6 人</option>
+            <option value="7">7 人</option>
+            <option value="8">8 人</option>
+          </select>
+        </label>
+        <button id="analyzeBtn">生成文字稿</button>
+      </div>
+      <label class="speaker-control engine-control" for="engine">
+        <span>转写引擎</span>
+        <select id="engine"><option value="aliyun-refined">新版：阿里云转写 + 音视频说话人复核</option><option value="aliyun">对比：阿里云原始人物标注</option><option value="local">本地 Whisper + 声纹</option></select>
+      </label>
+      <div class="hint">阿里云模式会上传音轨并产生云服务费用，完成后删除 OSS 临时音频。人数只是参考，不能保证分离准确。</div>
+      <div id="error" class="error hidden" role="alert"></div>
+    </section>
+
+    <section id="progressCard" class="card progress-card hidden">
+      <div class="section-title">处理进度</div>
+      <div class="steps">
+        <div class="step" data-step="parsing"><span>1</span><b>解析链接</b><small>获取视频地址和来源信息</small></div>
+        <div class="step" data-step="downloading"><span>2</span><b>下载视频</b><small>保存并校验 MP4 文件</small></div>
+        <div class="step" data-step="transcribing"><span>3</span><b>语音转写</b><small>使用所选引擎识别声音</small></div>
+        <div class="step" data-step="diarizing"><span>4</span><b>区分人物</b><small>生成说话人标注</small></div>
+      </div>
+      <p id="statusText" class="status-text" aria-live="polite"></p>
+    </section>
+
+    <section id="result" class="result-grid hidden">
+      <article class="card source-card">
+        <div class="section-title">来源信息</div>
+        <div class="source-main">
+          <img id="cover" class="cover" alt="视频封面">
+          <div>
+            <h2 id="title">-</h2>
+            <p id="author" class="author">-</p>
+            <p id="description" class="description">-</p>
+          </div>
+        </div>
+        <p id="mediaInfo" class="published-at"></p>
+        <a id="sourceLink" class="source-link" target="_blank" rel="noreferrer">打开分享链接 ↗</a>
+      </article>
+
+      <article class="card transcript-card">
+        <div class="section-title transcript-header"><span>文字稿</span><a id="downloadText" class="button secondary hidden">下载 TXT</a></div>
+        <p id="transcriptHint" class="hint">等待转写结果…</p>
+        <div id="transcriptLines" class="transcript-lines"></div>
+      </article>
+    </section>
+    <footer>第三方接口解析链接 · 可选阿里云或本地语音转写</footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
